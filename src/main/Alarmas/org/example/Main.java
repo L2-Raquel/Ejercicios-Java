@@ -1,5 +1,5 @@
 package org.example;
-
+//Terminado sin validaciones
 import java.util.Objects;
 import java.util.Scanner;
 
