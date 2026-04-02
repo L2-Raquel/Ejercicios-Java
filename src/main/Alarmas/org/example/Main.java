@@ -3,40 +3,59 @@ package org.example;
 import java.util.Objects;
 import java.util.Scanner;
 
-//Prueba 6
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
         Scanner entrada = new Scanner(System.in);
+        String eleccion=entrada.nextLine();
+
 
         int dia=entrada.nextInt();
          int numH=entrada.nextInt();
          int numM=entrada.nextInt();
          entrada.nextLine();
          boolean activa=true;
+
         String mensaje=entrada.nextLine();
-        Alarma alarma =new Alarma(dia,numH, numM, activa,mensaje);
 
+Alarma miAlarma = null;
 
-        String eleccion=entrada.nextLine();
         switch (eleccion){
-            case "S": ;
-            break;
-            case "M": ;
-            break;
-            case"V":
+            case "S":
+                miAlarma = new AlarmaSonora(dia, numH, numM, activa, mensaje);
                 break;
+            case "V":
+                miAlarma = new AlarmaVibracion(dia, numH, numM, activa, mensaje);
+                break;
+            case "M":
+              //Hay que usar setCancion ANTES de guardarla en miAlarma
+                AlarmaMusical am = new AlarmaMusical(dia, numH, numM, activa, mensaje);
+                am.setCancion("Himno de la alegría");
+                miAlarma = am; // Se guarda después de meter la canción
+                break;
+
+                /*
+                Si quisiera añadir la canción depués de crear la clase habría que hacer un "casting":
+                miAlarma = new AlarmaMusical(...);
+// miAlarma.setCancion("..."); // Esto daría ERROR de compilación.
+
+((AlarmaMusical) miAlarma).setCancion("Himno de la alegría"); // Esto funciona pero es más "sucio".
+                 */
         }
 
 
-AlarmaSonora alarma1 = new AlarmaSonora(dia,numH, numM, activa,mensaje);
-        AlarmaVibracion alarma2 = new AlarmaVibracion(dia,numH, numM, activa,mensaje);
-AlarmaMusical alarma3=new AlarmaMusical(dia,numH, numM, activa,mensaje);
-alarma3.setCancion("Himno de la alegría");
+        assert miAlarma != null : "La alarma no debería ser nula";
+        //aserciones: son declaraciones booleanas que se consideran verdaderas en un punto específico
+        miAlarma.sonar();
+
+        System.out.println( miAlarma.getMensaje());
 
     }
 }
+
+
+
+
+
 
 class AlarmaSonora extends Alarma {
 
@@ -89,13 +108,11 @@ class AlarmaVibracion extends Alarma{
 
         @Override
         public String toString() {
-            return "AlarmaMusical{" +
-                    "cancion='" + cancion + '\'' +
-                    '}';
+            return super.toString() + " [Canción: " + cancion + "]";
         }
     }
 
-class Alarma {
+abstract class Alarma {
     private int dia;
     private int numH;
     private int numM;
@@ -186,9 +203,7 @@ class Alarma {
                 '}';
     }
 
-     void sonar() {
-        System.out.println(" ");
-    }
+     abstract void sonar();
 
 
     private String mensajes() {
